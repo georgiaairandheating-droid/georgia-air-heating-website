@@ -14,6 +14,9 @@ const { connectDB } = require('./config/database');
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Trust proxy for Render.com
+app.set('trust proxy', 1);
+
 // Connect to Database
 connectDB();
 
