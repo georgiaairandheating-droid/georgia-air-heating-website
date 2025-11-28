@@ -1,24 +1,15 @@
-const nodemailer = require('nodemailer');
+const sgMail = require('@sendgrid/mail');
 
-// Create email transporter with alternative config for Render
-const createTransporter = () => {
-    return nodemailer.createTransport({
-        host: 'smtp.gmail.com',
-        port: 465,
-        secure: true, // use SSL
-        auth: {
-            user: process.env.EMAIL_USER,
-            pass: process.env.EMAIL_PASS
-        },
-        tls: {
-            rejectUnauthorized: false
-        }
-    });
-};
+// Initialize SendGrid
+if (process.env.SENDGRID_API_KEY) {
+    sgMail.setApiKey(process.env.SENDGRID_API_KEY);
+}
 
 // Send notification to business
 async function sendBusinessNotification(contactData) {
-    const transporter = createTransporter();
+    if (!process.env.SENDGRID_API_KEY) {
+        throw new Error('SENDGRID_API_KEY is not configured');
+    }
 
     const serviceTypes = {
         'heating-install': 'Heating Installation',
@@ -34,9 +25,9 @@ async function sendBusinessNotification(contactData) {
 
     const serviceName = serviceTypes[contactData.service] || 'Not specified';
 
-    const mailOptions = {
-        from: process.env.EMAIL_USER,
+    const msg = {
         to: process.env.BUSINESS_EMAIL,
+        from: process.env.SENDGRID_FROM_EMAIL, // Must be verified in SendGrid
         subject: `New Contact Form Submission - ${serviceName}`,
         html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -67,7 +58,7 @@ async function sendBusinessNotification(contactData) {
     };
 
     try {
-        await transporter.sendMail(mailOptions);
+        await sgMail.send(msg);
         console.log('Business notification sent successfully');
         return { success: true };
     } catch (error) {
@@ -78,11 +69,13 @@ async function sendBusinessNotification(contactData) {
 
 // Send confirmation to customer
 async function sendCustomerConfirmation(contactData) {
-    const transporter = createTransporter();
+    if (!process.env.SENDGRID_API_KEY) {
+        throw new Error('SENDGRID_API_KEY is not configured');
+    }
 
-    const mailOptions = {
-        from: process.env.EMAIL_USER,
+    const msg = {
         to: contactData.email,
+        from: process.env.SENDGRID_FROM_EMAIL, // Must be verified in SendGrid
         subject: 'Thank You for Contacting Georgia Air and Heating LLC',
         html: `
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
@@ -128,7 +121,7 @@ async function sendCustomerConfirmation(contactData) {
     };
 
     try {
-        await transporter.sendMail(mailOptions);
+        await sgMail.send(msg);
         console.log('Customer confirmation sent successfully');
         return { success: true };
     } catch (error) {
