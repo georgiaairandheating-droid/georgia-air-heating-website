@@ -151,7 +151,6 @@ function initContactForm() {
             formMessage.style.display = 'none';
 
             try {
-                console.log('Sending request to /api/contact...');
                 // Send to backend API (relative path)
                 const response = await fetch('/api/contact', {
                     method: 'POST',
@@ -161,17 +160,7 @@ function initContactForm() {
                     body: JSON.stringify(formData)
                 });
 
-                console.log('Response received:', response.status, response.statusText);
-                const text = await response.text();
-                console.log('Response body:', text);
-
-                let data;
-                try {
-                    data = JSON.parse(text);
-                } catch (e) {
-                    console.error('Failed to parse JSON:', e);
-                    throw new Error('Invalid server response');
-                }
+                const data = await response.json();
 
                 if (response.ok && data.success) {
                     // Success!
@@ -191,23 +180,17 @@ function initContactForm() {
                 console.error('Form submission error:', error);
                 showMessage('Unable to send message. Please try again or call us directly at 770-376-7161.', 'error');
             } finally {
-                console.log('Executing finally block - resetting button state');
                 // Reset button state
                 if (submitBtn) submitBtn.disabled = false;
                 if (submitText) submitText.style.display = 'inline';
                 if (submitLoading) submitLoading.style.display = 'none';
-                console.log('Button state reset complete');
             }
         });
     }
 
     // Helper function to show messages
     function showMessage(message, type) {
-        console.log(`showMessage called with: "${message}", type: ${type}`);
-        if (!formMessage) {
-            console.error('formMessage element not found!');
-            return;
-        }
+        if (!formMessage) return;
 
         formMessage.textContent = message;
         formMessage.style.display = 'block';
@@ -223,11 +206,7 @@ function initContactForm() {
         }
 
         // Scroll to message
-        try {
-            formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-        } catch (e) {
-            console.error('Error scrolling to message:', e);
-        }
+        formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
 
         // Auto-hide success messages after 10 seconds
         if (type === 'success') {
