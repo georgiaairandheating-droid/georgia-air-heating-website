@@ -191,17 +191,23 @@ function initContactForm() {
                 console.error('Form submission error:', error);
                 showMessage('Unable to send message. Please try again or call us directly at 770-376-7161.', 'error');
             } finally {
+                console.log('Executing finally block - resetting button state');
                 // Reset button state
-                submitBtn.disabled = false;
-                submitText.style.display = 'inline';
-                submitLoading.style.display = 'none';
+                if (submitBtn) submitBtn.disabled = false;
+                if (submitText) submitText.style.display = 'inline';
+                if (submitLoading) submitLoading.style.display = 'none';
+                console.log('Button state reset complete');
             }
         });
     }
 
     // Helper function to show messages
     function showMessage(message, type) {
-        if (!formMessage) return;
+        console.log(`showMessage called with: "${message}", type: ${type}`);
+        if (!formMessage) {
+            console.error('formMessage element not found!');
+            return;
+        }
 
         formMessage.textContent = message;
         formMessage.style.display = 'block';
@@ -217,7 +223,11 @@ function initContactForm() {
         }
 
         // Scroll to message
-        formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        try {
+            formMessage.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        } catch (e) {
+            console.error('Error scrolling to message:', e);
+        }
 
         // Auto-hide success messages after 10 seconds
         if (type === 'success') {
