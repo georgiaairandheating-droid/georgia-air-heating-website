@@ -64,7 +64,7 @@ app.use(express.static(path.join(__dirname, '..', 'public')));
 // Rate limiting - prevent spam
 const limiter = rateLimit({
     windowMs: 15 * 60 * 1000, // 15 minutes
-    max: 5, // Limit each IP to 5 requests per windowMs
+    max: 20, // Limit each IP to 20 requests per windowMs (increased for testing)
     message: {
         success: false,
         message: 'Too many requests from this IP, please try again later.'
