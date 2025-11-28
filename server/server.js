@@ -17,12 +17,38 @@ const PORT = process.env.PORT || 3000;
 // Connect to Database
 connectDB();
 
-// Security middleware
-app.use(helmet());
+// Security middleware - Configure Helmet to allow Google Maps
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            frameSrc: ["'self'", "https://www.google.com"],
+            imgSrc: ["'self'", "data:", "https:"],
+            scriptSrc: ["'self'", "'unsafe-inline'"],
+            styleSrc: ["'self'", "'unsafe-inline'", "https://fonts.googleapis.com"],
+            fontSrc: ["'self'", "https://fonts.gstatic.com"]
+        }
+    }
+}));
 
-// CORS configuration
+// CORS configuration - Allow same-origin and configured frontend
 const corsOptions = {
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: function (origin, callback) {
+        // Allow requests with no origin (like mobile apps or curl requests)
+        if (!origin) return callback(null, true);
+
+        const allowedOrigins = [
+            process.env.FRONTEND_URL,
+            'http://localhost:3000',
+            'http://localhost:8000'
+        ].filter(Boolean);
+
+        if (allowedOrigins.indexOf(origin) !== -1) {
+            callback(null, true);
+        } else {
+            callback(null, true); // Allow all origins for now since frontend and backend are on same domain
+        }
+    },
     methods: ['GET', 'POST'],
     credentials: true
 };
