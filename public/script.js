@@ -151,6 +151,7 @@ function initContactForm() {
             formMessage.style.display = 'none';
 
             try {
+                console.log('Sending request to /api/contact...');
                 // Send to backend API (relative path)
                 const response = await fetch('/api/contact', {
                     method: 'POST',
@@ -160,7 +161,17 @@ function initContactForm() {
                     body: JSON.stringify(formData)
                 });
 
-                const data = await response.json();
+                console.log('Response received:', response.status, response.statusText);
+                const text = await response.text();
+                console.log('Response body:', text);
+
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch (e) {
+                    console.error('Failed to parse JSON:', e);
+                    throw new Error('Invalid server response');
+                }
 
                 if (response.ok && data.success) {
                     // Success!

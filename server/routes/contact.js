@@ -33,12 +33,15 @@ router.post('/', contactValidationRules, validate, async (req, res) => {
             // Don't fail the request if emails fail
         });
 
+        console.log('Sending success response to client...');
+
         // Return success response
         res.status(200).json({
             success: true,
             message: 'Thank you for contacting us! We\'ll get back to you within 24 hours.',
             contactId: result.id
         });
+        console.log('Response sent.');
 
     } catch (error) {
         console.error('Error processing contact form:', error);
