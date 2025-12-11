@@ -834,7 +834,7 @@ textarea.form-control {
     }
 
     .hero {
-        padding: var(--spacing-2xl) var(--spacing-md);
+        padding: 120px var(--spacing-md) var(--spacing-2xl);
         min-height: 80vh;
     }
 
