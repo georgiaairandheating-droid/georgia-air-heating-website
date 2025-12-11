@@ -88,13 +88,25 @@ app.use((req, res, next) => {
 // API Routes
 app.use('/api/contact', contactRoutes);
 
-// Health check endpoint
-app.get('/api/health', (req, res) => {
-    res.json({
-        success: true,
-        message: 'Server is running',
-        timestamp: new Date().toISOString()
-    });
+// Health check endpoint (keeps both Render and Supabase active)
+app.get('/api/health', async (req, res) => {
+    try {
+        const { getServiceStatus } = require('./config/database');
+        const dbStatus = await getServiceStatus();
+
+        res.json({
+            success: true,
+            message: 'Server and Database are active',
+            timestamp: new Date().toISOString(),
+            database: dbStatus ? 'connected' : 'disconnected'
+        });
+    } catch (error) {
+        res.status(500).json({
+            success: false,
+            message: 'Server active but Database check failed',
+            error: error.message
+        });
+    }
 });
 
 // Root endpoint

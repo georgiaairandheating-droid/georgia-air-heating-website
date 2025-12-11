@@ -68,8 +68,25 @@ async function getAllContacts() {
     return data;
 }
 
+// Check service status (keep-alive)
+async function getServiceStatus() {
+    if (!supabase) return false;
+
+    try {
+        // Simple query to keep DB awake
+        const { count, error } = await supabase
+            .from('contacts')
+            .select('*', { count: 'exact', head: true });
+
+        return !error;
+    } catch (error) {
+        return false;
+    }
+}
+
 module.exports = {
     connectDB,
     insertContact,
-    getAllContacts
+    getAllContacts,
+    getServiceStatus
 };
