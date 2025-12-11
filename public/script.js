@@ -178,7 +178,7 @@ function initContactForm() {
             } catch (error) {
                 // Network or other error
                 console.error('Form submission error:', error);
-                showMessage('Unable to send message. Please try again or call us directly at 770-376-7161.', 'error');
+                showMessage('Unable to send message. Please try again or call us directly at 678-790-1291.', 'error');
             } finally {
                 // Reset button state
                 if (submitBtn) submitBtn.disabled = false;

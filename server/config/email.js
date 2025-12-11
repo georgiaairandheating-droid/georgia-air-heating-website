@@ -94,8 +94,7 @@ async function sendCustomerConfirmation(contactData) {
                         <p style="margin: 0;"><strong>What happens next?</strong></p>
                         <p style="margin: 10px 0 0 0;">Our team will review your request and get back to you within 24 hours. For urgent matters, please call us directly at:</p>
                         <p style="margin: 10px 0 0 0; font-size: 18px; color: #2563eb;">
-                            <strong>English: 770-376-7161</strong><br>
-                            <strong>Español: 770-852-0216</strong>
+                            <strong>678-790-1291</strong>
                         </p>
                     </div>
 
